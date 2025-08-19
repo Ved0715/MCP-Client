@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional
 from datetime import datetime
 import logging
 
-from langchain.memory import ConversationBufferMemory
+from langchain.memory import ConversationBufferMemory, ConversationBufferWindowMemory
 from sqlalchemy import create_engine, text
 
 # Try different PostgreSQL chat history implementations
@@ -121,7 +121,8 @@ class PostgreSQLMemoryManager:
                     table_name="message_store"
                 )
                 
-                memory = ConversationBufferMemory(
+                memory = ConversationBufferWindowMemory(
+                    k=10,  # Keep only last 10 message exchanges
                     chat_memory=history,
                     memory_key="chat_history",
                     return_messages=True,
@@ -133,7 +134,8 @@ class PostgreSQLMemoryManager:
             else:
                 # Fallback to simple memory if PostgreSQL import fails
                 logger.warning("⚠️ PostgreSQL chat history not available, using simple memory")
-                memory = ConversationBufferMemory(
+                memory = ConversationBufferWindowMemory(
+                    k=10,  # Keep only last 10 message exchanges
                     memory_key="chat_history",
                     return_messages=True,
                     input_key="input",
@@ -147,7 +149,8 @@ class PostgreSQLMemoryManager:
             logger.error(f"❌ Failed to create memory for session {session_id}: {e}")
             # Create fallback memory
             logger.warning("⚠️ Creating fallback memory due to PostgreSQL error")
-            memory = ConversationBufferMemory(
+            memory = ConversationBufferWindowMemory(
+                k=10,  # Keep only last 10 message exchanges
                 memory_key="chat_history",
                 return_messages=True,
                 input_key="input",
