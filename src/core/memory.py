@@ -206,6 +206,7 @@ class PostgreSQLMemoryManager:
                 """), {"session_id": session_id})
                 
                 messages = []
+                
                 for row in result:
                     try:
                         message_data = row[0]

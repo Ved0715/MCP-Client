@@ -208,8 +208,8 @@ class MCPLLMOrchestrator:
                 verbose=True,  # Shows reasoning steps
                 memory=self.memory,  # PostgreSQL-backed memory
                 handle_parsing_errors=True,  # Graceful error handling
-                max_iterations=5,  # Prevent infinite loops
-                early_stopping_method="generate",  # Stop on final answer
+                max_iterations=10,  # Allow multiple tool calls
+                early_stopping_method="force",  # Allow multiple iterations before stopping
                 return_intermediate_steps=True,  # For debugging
             )
             
